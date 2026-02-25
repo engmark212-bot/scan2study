@@ -1,0 +1,48 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  password     String
+  currentGrade String
+  targetGrade  String
+  examDate     DateTime
+  subjects     String
+  xp           Int      @default(0)
+  createdAt    DateTime @default(now())
+  notes        Note[]
+  results      Result[]
+  streak       Streak?
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Result {
+  id        String   @id @default(uuid())
+  userId    String
+  score     Float
+  topic     String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Streak {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  days      Int      @default(0)
+  lastStudy DateTime
+  user      User     @relation(fields: [userId], references: [id])
+}
